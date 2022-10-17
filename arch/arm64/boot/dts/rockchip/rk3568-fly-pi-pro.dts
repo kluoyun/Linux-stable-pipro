@@ -2,8 +2,13 @@
 
 /dts-v1/;
 #include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pwm/pwm.h>
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/pinctrl/rockchip.h>
+#include <dt-bindings/input/rk-input.h>
+#include <dt-bindings/display/drm_mipi_dsi.h>
+#include <dt-bindings/sensor-dev.h>
+
 #include "rk3568.dtsi"
 
 / {
@@ -119,6 +124,24 @@
 		regulator-max-microvolt = <5000000>;
 		vin-supply = <&vcc5v0_usb>;
 	};
+	
+	vcc_mipi: vcc-mipi {
+		status = "disabled";
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_mipi";
+		regulator-boot-on;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		enable-active-high;
+		regulator-always-on;
+		gpio = <&gpio3 RK_PC0 GPIO_ACTIVE_HIGH>;
+		vin-supply = <&vcc3v3_sys>;
+
+		regulator-state-mem {
+			regulator-off-in-suspend;
+		};
+	};
+
 };
 
 &combphy0 {
@@ -144,6 +167,82 @@
 &cpu3 {
 	cpu-supply = <&vdd_cpu>;
 };
+
+////////////////////////////////////////////////////////
+&video_phy0 {
+    status = "disabled";
+};
+
+&dsi0 {
+	status = "disabled";
+	power-supply = <&vcc_mipi>;
+
+	dsi0_panel: dsi-panel@0 {
+		compatible = "rockpi,tc358762";
+		reg = <0x0>;
+		status = "disabled";
+
+		ports {			
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+
+				panel_in_dsi0: endpoint {
+					remote-endpoint = <&dsi0_out_panel>;
+				};
+			};
+		};
+	};
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			dsi0_out_panel: endpoint@0 {
+				reg = <0>;
+				remote-endpoint = <&panel_in_dsi0>;
+			};
+		};
+	};
+};
+
+&dsi0_in_vp0 {
+	status = "disabled";
+};
+
+&dsi0_in_vp1 {
+	status = "disabled";
+};
+
+&route_dsi0 {
+	status = "disabled";
+	connect = <&vp1_out_dsi0>;
+};
+
+&i2c3 {
+	status = "disabled";
+	pinctrl-0 = <&i2c3m1_xfer>;
+
+	rockpi_mcu: rockpi-mcu@45 {
+		compatible = "rockpi_mcu";
+		reg = <0x45>;
+		status = "disabled";
+	};
+
+	rockpi_ft5406: rockpi_ft5406@38 {
+		compatible = "rockpi_ft5406";
+		reg = <0x38>;
+		status = "disabled";
+	};
+};
+//////////////////////////////////////////////////////////
 
 &gmac0 {
 	phy-mode = "rgmii";
@@ -603,6 +702,10 @@
 };
 
 &usb_host1_xhci {
+	status = "okay";
+};
+
+&usbhost30 {
 	status = "okay";
 };
 
