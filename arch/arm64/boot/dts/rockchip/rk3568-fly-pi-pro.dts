@@ -496,7 +496,7 @@
 	vqmmc-supply = <&vcc_1v8>;
 	status = "okay";
 };
-
+/*
 &sdmmc0 {
 	bus-width = <4>;
 	cap-sd-highspeed;
@@ -509,6 +509,24 @@
 	vqmmc-supply = <&vccio_sd>;
 	status = "okay";
 };
+*/
+
+&sdmmc0 {
+	max-frequency = <150000000>;
+	supports-sd;
+	bus-width = <4>;
+	cap-mmc-highspeed;
+	cap-sd-highspeed;
+	disable-wp;
+	cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
+	sd-uhs-sdr104;
+	vmmc-supply = <&vcc3v3_sd>;
+	vqmmc-supply = <&vccio_sd>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
+	status = "okay";
+};
+
 
 &spi1 {
 	/* ST7789V3 */
