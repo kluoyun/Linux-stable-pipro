@@ -8,10 +8,10 @@
 
 / {
 	model = "Mellow Fly Pi Pro";
-	compatible = "mellow,flypipro", "rockchip,rk3568";
+	compatible = "mellow,fly-pi-pro", "rockchip,rk3568";
 
 	aliases {
-		ethernet0 = &gmac1;
+		ethernet0 = &gmac0;
 		mmc0 = &sdmmc0;
 		mmc1 = &sdhci;
 	};
